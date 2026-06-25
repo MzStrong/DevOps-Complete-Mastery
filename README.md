@@ -4,6 +4,8 @@ Repository นี้เป็นชุดเอกสารสำหรับฝ
 
 เนื้อหาหลักอยู่ในไฟล์ [devops-lab-vmware-th.md](./devops-lab-vmware-th.md)
 
+ถ้าต้องการอ่านแบบแยกทีละบท ให้เริ่มจาก [lessons/README.md](./lessons/README.md)
+
 ## เกี่ยวกับ Lab นี้
 
 เอกสารนี้ออกแบบมาสำหรับผู้ที่มีพื้นฐาน Fullstack Developer แล้ว และต้องการต่อยอดไปสู่สาย DevOps Engineer, Cloud Engineer, Platform Engineer หรือ SRE ผ่านการฝึกกับระบบจำลองที่ใกล้เคียงงานจริง
@@ -76,6 +78,12 @@ PC ที่บ้าน
 
 ```text
 devops-lab-vmware-th.md
+```
+
+หรืออ่านแบบแยกบทจากโฟลเดอร์:
+
+```text
+lessons/
 ```
 
 แนะนำให้ทำ Lab ตามลำดับ เพราะแต่ละบทต่อยอดจากพื้นฐานก่อนหน้า เช่น Kubernetes ต้องอาศัยความเข้าใจ Linux, network, container runtime และ registry ที่ทำไว้ในบทก่อน
