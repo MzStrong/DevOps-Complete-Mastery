@@ -122,6 +122,42 @@ container Running แต่เข้าไม่ได้
 -> ตรวจ port mapping ด้วย docker ps และ ss
 ```
 
+## Docker Compose service ไม่ขึ้น
+
+ตรวจ:
+
+```bash
+docker compose ps
+docker compose logs -f
+docker compose logs -f <service-name>
+docker compose config
+```
+
+สาเหตุ:
+
+- YAML indentation ผิด
+- service build ไม่ผ่าน
+- environment variable ไม่ครบ
+- database ยังไม่พร้อม
+- port บน host ถูกใช้ไปแล้ว
+- volume permission ผิด
+
+แยกปัญหา:
+
+```text
+docker compose config fail
+-> YAML หรือ Compose syntax ผิด
+
+service Exited
+-> docker compose logs <service-name>
+
+backend ต่อ db ไม่ได้
+-> ตรวจ DB_HOST ต้องเป็นชื่อ service เช่น db ไม่ใช่ localhost
+
+เข้า app จาก host ไม่ได้
+-> ตรวจ ports เช่น "8080:80" และ firewall
+```
+
 ## Nginx config error
 
 ตรวจ syntax:
@@ -355,6 +391,50 @@ curl -H "Host: simple-api.lab.local" http://<node-ip>
 - Service ไม่มี endpoint
 - NodePort/port ที่ใช้ทดสอบผิด
 
+## Helm install หรือ upgrade fail
+
+ตรวจ:
+
+```bash
+helm lint .
+helm template simple-api . -n devops-lab
+helm install simple-api . -n devops-lab --dry-run --debug
+helm list -n devops-lab
+helm status simple-api -n devops-lab
+```
+
+สาเหตุ:
+
+- template syntax ผิด
+- values key ไม่มีหรือชื่อผิด
+- namespace ยังไม่มี
+- resource เดิมมีอยู่แล้วแต่ไม่ได้ถูก Helm จัดการ
+- Kubernetes manifest ที่ render ออกมาไม่ valid
+
+แยกปัญหา:
+
+```text
+helm lint fail
+-> แก้ chart structure หรือ template syntax
+
+helm template ออกมา YAML ผิด
+-> แก้ values/templates ก่อน install
+
+install ผ่านแต่ pod ไม่ขึ้น
+-> ไป debug ด้วย kubectl describe/logs
+
+rollback แล้ว app ยังพัง
+-> Helm rollback manifest ได้ แต่ไม่ได้ rollback database/data
+```
+
+ดู manifest ที่ release ใช้อยู่:
+
+```bash
+helm get values simple-api -n devops-lab
+helm get manifest simple-api -n devops-lab
+helm history simple-api -n devops-lab
+```
+
 ## Prometheus target Down
 
 ตรวจจาก monitor-server:
@@ -443,5 +523,77 @@ terraform state list
 - plan กำลังจะลบ resource ที่ไม่คาดคิด
 
 หลักปฏิบัติ: อ่าน plan ก่อน apply เสมอ โดยเฉพาะถ้าเห็น `destroy`
+
+## Trivy scan fail หรือ pipeline fail เพราะ security scan
+
+ตรวจบนเครื่องที่รัน scan:
+
+```bash
+trivy --version
+trivy image simple-api:1.0.0
+trivy fs .
+```
+
+สาเหตุ:
+
+- Trivy download vulnerability database ไม่ได้
+- image tag ไม่มีใน local/registry
+- registry เข้าถึงไม่ได้
+- pipeline ตั้ง `--exit-code 1` แล้วเจอ vulnerability ตาม threshold
+- ไม่มี permission อ่านไฟล์บาง path
+
+แยกปัญหา:
+
+```text
+scan fail เพราะ DB download ไม่ได้
+-> ตรวจ internet/DNS/proxy
+
+scan image ไม่เจอ
+-> docker images หรือ docker pull image ก่อน
+
+pipeline fail เพราะ CRITICAL
+-> อ่าน CVE, fixed version และ update base image/dependency
+
+เจอ LOW/MEDIUM จำนวนมาก
+-> อย่าเพิ่ง block ทั้งหมด ให้ตั้ง severity gate ตาม risk ที่ทีมรับได้
+```
+
+ถ้าใช้ใน GitLab CI ให้เปิด job log และดูว่า command ไหน exit code ไม่เป็น 0
+
+## Backup หรือ Restore ใช้ไม่ได้
+
+ตรวจ backup file:
+
+```bash
+ls -lh backup-appdb.sql
+head backup-appdb.sql
+grep -i "PostgreSQL database dump" backup-appdb.sql
+```
+
+ทดสอบ restore:
+
+```bash
+docker compose exec db createdb -U appuser appdb_restore_test
+cat backup-appdb.sql | docker compose exec -T db psql -U appuser -d appdb_restore_test
+docker compose exec db psql -U appuser -d appdb_restore_test -c "\dt"
+```
+
+สาเหตุ:
+
+- backup file ว่างหรือ dump ไม่ครบ
+- backup มาจาก database คนละ version แล้ว restore มี warning/error
+- restore เข้า database ผิดตัว
+- permission อ่านไฟล์ backup ไม่ได้
+- backup Kubernetes YAML มี field runtime เช่น `resourceVersion`, `uid`, `status`
+- backup resource YAML แต่ไม่ได้ backup data ใน volume/database
+
+หลักปฏิบัติ:
+
+```text
+backup ที่ไม่เคย restore = ยังไม่ถือว่าเชื่อถือได้
+restore test ควรทำใน database แยกก่อน
+เก็บ backup นอก container/volume ที่อาจหายพร้อมกัน
+Secret backup ต้องเก็บอย่างปลอดภัย
+```
 
 ---

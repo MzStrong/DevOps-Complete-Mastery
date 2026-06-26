@@ -47,9 +47,9 @@
 | 22 | `lessons/22-final-project.md` | เสร็จแล้ว | เพิ่มรายละเอียด scope, phase การทำงาน, acceptance criteria, demo script, README requirement และข้อผิดพลาดที่ควรหลีกเลี่ยง |
 | 23 | `lessons/23-completion-checklist.md` | เสร็จแล้ว | เพิ่มหลักฐานที่ควรมีในแต่ละหมวด, backup/restore checklist และเกณฑ์ผ่านแบบ practical |
 | 24 | `lessons/24-troubleshooting.md` | เสร็จแล้ว | ขยายเป็น runbook troubleshooting ครอบคลุม SSH, Docker, Nginx, GitLab, Registry, Kubernetes, Ingress, Monitoring, Logging และ Terraform |
-| 25 | `lessons/25-appendix-commands.md` | ยังไม่ทำ | ภาคผนวกคำสั่ง |
-| 26 | `lessons/26-next-steps.md` | ยังไม่ทำ | แนวทางเรียนต่อ |
-| 27 | `lessons/27-final-summary.md` | ยังไม่ทำ | สรุปสุดท้าย |
+| 25 | `lessons/25-appendix-commands.md` | เสร็จแล้ว | ขยายเป็น quick reference พร้อมบริบทการใช้คำสั่ง Linux, Docker, Compose, Registry, Kubernetes, Helm, Monitoring, Logging, Terraform, Trivy และ Backup |
+| 26 | `lessons/26-next-steps.md` | เสร็จแล้ว | ขยายแนวทางเรียนต่อพร้อมเหตุผล, mini project, concept ที่ควรรู้ และลำดับแนะนำตามสายงาน |
+| 27 | `lessons/27-final-summary.md` | เสร็จแล้ว | ขยายสรุปสุดท้ายให้เชื่อมทุกบทเป็น end-to-end flow พร้อมวิธีคิดหลังเรียนจบ |
 
 ## Log การทำงาน
 
@@ -81,3 +81,7 @@
 - ขยายรายละเอียด `lessons/22-final-project.md` แล้ว
 - ขยายรายละเอียด `lessons/23-completion-checklist.md` แล้ว
 - ขยายรายละเอียด `lessons/24-troubleshooting.md` แล้ว
+- ตรวจและเติม `lessons/24-troubleshooting.md` เพิ่มเติมให้ครอบคลุม Docker Compose, Helm, Trivy และ Backup/Restore
+- ขยายรายละเอียด `lessons/25-appendix-commands.md` แล้ว
+- ขยายรายละเอียด `lessons/26-next-steps.md` แล้ว
+- ขยายรายละเอียด `lessons/27-final-summary.md` แล้ว
