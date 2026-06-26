@@ -2,9 +2,7 @@
 
 Repository นี้เป็นชุดเอกสารสำหรับฝึก DevOps แบบลงมือทำจริงบนเครื่อง PC ที่บ้าน โดยใช้ VMware Workstation หรือ VMware Player จำลองสภาพแวดล้อมหลายเครื่อง เช่น GitLab server, application server, monitoring server และ Kubernetes cluster
 
-เนื้อหาหลักอยู่ในไฟล์ [devops-lab-vmware-th.md](./devops-lab-vmware-th.md)
-
-ถ้าต้องการอ่านแบบแยกทีละบท ให้เริ่มจาก [lessons/README.md](./lessons/README.md)
+เนื้อหาหลักอยู่ในโฟลเดอร์ [lessons](./lessons) โดยเริ่มอ่านจาก [lessons/README.md](./lessons/README.md)
 
 ## เกี่ยวกับ Lab นี้
 
@@ -74,13 +72,7 @@ PC ที่บ้าน
 
 ## วิธีใช้งาน
 
-เปิดอ่านเอกสารหลักแล้วทำตามลำดับ:
-
-```text
-devops-lab-vmware-th.md
-```
-
-หรืออ่านแบบแยกบทจากโฟลเดอร์:
+เปิดอ่านเอกสารแบบแยกบทจากโฟลเดอร์:
 
 ```text
 lessons/

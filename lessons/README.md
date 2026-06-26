@@ -1,6 +1,6 @@
 # DevOps Lab Lessons
 
-สารบัญไฟล์ที่แยกจาก `devops-lab-vmware-th.md` เพื่อให้อ่านและทำ Lab ทีละบทได้ง่ายขึ้น
+สารบัญบทเรียน DevOps Lab แบบแยกไฟล์ เพื่อให้อ่านและทำ Lab ทีละบทได้ง่ายขึ้น
 
 - [DevOps Lab ภาษาไทย สำหรับจำลองบน VMware ที่บ้าน](./00-introduction.md)
 - [1. ภาพรวม Lab](./01-overview.md)
