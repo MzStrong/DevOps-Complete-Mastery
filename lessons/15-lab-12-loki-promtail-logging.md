@@ -132,12 +132,15 @@ clients:
   - url: http://monitor-server:3100/loki/api/v1/push
 ```
 
+ข้อควรระวัง: Promtail รันเป็น container จึงอาจไม่เห็น `/etc/hosts` ของ host โดยตรง ถ้า container resolve `monitor-server` ไม่ได้ ให้ใช้ IP ของ monitor-server ใน `clients.url` หรือเพิ่ม `--add-host monitor-server:192.168.56.30` ตอน `docker run`
+
 เพราะต้องส่ง log ไปยัง Loki ที่ monitor-server
 
 Run:
 
 ```bash
 docker run -d --name promtail --restart always \
+  --add-host monitor-server:192.168.56.30 \
   -v ~/promtail/config.yml:/etc/promtail/config.yml \
   -v /var/log:/var/log:ro \
   grafana/promtail:latest \
@@ -148,6 +151,7 @@ docker run -d --name promtail --restart always \
 
 - mount config เข้า container
 - mount `/var/log` ของ host เข้า container แบบ read-only
+- `--add-host monitor-server:192.168.56.30` ทำให้ container resolve ชื่อ `monitor-server` ได้ใน lab ที่ไม่มี DNS จริง ให้เปลี่ยน IP ตาม network plan ของคุณ
 - รัน Promtail ด้วย config ที่กำหนด
 - restart อัตโนมัติเมื่อ reboot หรือ container crash
 
@@ -260,6 +264,9 @@ Grafana datasource fail
 
 Promtail error connect Loki
 -> monitor-server resolve ไม่ได้, port 3100 block, Loki ไม่พร้อม
+
+Promtail container resolve monitor-server ไม่ได้
+-> ใช้ IP ตรงใน clients.url หรือเพิ่ม --add-host ตอน docker run
 
 Query แล้วว่าง
 -> label ผิด, time range แคบเกิน, __path__ ไม่ match ไฟล์ log

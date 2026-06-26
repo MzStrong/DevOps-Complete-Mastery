@@ -146,7 +146,9 @@ scrape_configs:
 - `job_name: 'node-exporter'` ชื่อกลุ่ม target
 - `targets: ['app-server:9100']` endpoint ที่ Prometheus จะ scrape
 
-ชื่อ `app-server` ต้อง resolve ได้จาก `monitor-server` เพราะ Prometheus container จะรันบน `monitor-server` ถ้า container resolve ชื่อนี้ไม่ได้ target จะ down
+ชื่อ `app-server` ต้อง resolve ได้จากมุมมองของ Prometheus container ที่รันบน `monitor-server` ถ้า container resolve ชื่อนี้ไม่ได้ target จะ down แม้ host `monitor-server` จะ resolve ชื่อได้ก็ตาม
+
+ข้อควรระวัง: container ไม่ได้ใช้ `/etc/hosts` ของ host โดยตรงเสมอไป ถ้า Prometheus container resolve `app-server` ไม่ได้ ให้ใช้ IP ตรงใน target หรือเพิ่ม `extra_hosts` ใน Docker Compose
 
 ตัวอย่างที่ผิด:
 
@@ -183,6 +185,8 @@ services:
     image: prom/prometheus:latest
     ports:
       - "9090:9090"
+    extra_hosts:
+      - "app-server:192.168.56.20"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
@@ -203,6 +207,7 @@ Compose นี้รันสอง service:
 
 - `prometheus` เก็บ metrics และเปิด UI/API ที่ port 9090
 - `grafana` ใช้สร้าง dashboard และเปิด UI ที่ port 3000
+- `extra_hosts` ช่วยให้ Prometheus container resolve ชื่อ `app-server` ได้ใน lab ที่ใช้ `/etc/hosts` แทน DNS จริง
 
 volume:
 
@@ -330,6 +335,9 @@ monitor-server curl app-server:9100 ไม่ได้เพราะ no such ho
 
 Prometheus config ใช้ localhost:9100
 -> Prometheus scrape ตัวเอง ไม่ใช่ app-server
+
+Prometheus container resolve app-server ไม่ได้
+-> ใช้ IP ตรงใน target หรือเพิ่ม extra_hosts ใน docker-compose.yml
 ```
 
 ## Dashboard ควรดูอะไร

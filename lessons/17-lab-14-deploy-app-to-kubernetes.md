@@ -128,7 +128,7 @@ livenessProbe fail  -> kubelet restart container
 devops-control:5000/simple-api:1.0.0
 ```
 
-ทุก Kubernetes node ต้อง resolve `devops-control` ได้ และ container runtime ต้อง pull จาก registry นี้ได้ ถ้ายังไม่ได้ config insecure registry บน worker node จะเจอ ImagePullBackOff
+ทุก Kubernetes node ต้อง resolve `devops-control` ได้ และ container runtime ต้อง pull จาก registry นี้ได้ ถ้า worker ใช้ containerd ต้องตั้งค่า registry ฝั่ง containerd ไม่ใช่แค่ Docker daemon ไม่อย่างนั้นจะเจอ ImagePullBackOff
 
 Apply:
 
@@ -300,7 +300,7 @@ kubectl logs -n devops-lab <pod-name> --previous
 ImagePullBackOff
 -> image name/tag ผิด
 -> worker node pull registry ไม่ได้
--> insecure registry ยังไม่ได้ config
+-> containerd ยังไม่ได้ config ให้ใช้ HTTP registry
 -> devops-control resolve ไม่ได้
 
 CrashLoopBackOff

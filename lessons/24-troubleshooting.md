@@ -245,7 +245,7 @@ docker push devops-control:5000/simple-api:1.0.0
 
 ```text
 server gave HTTP response to HTTPS client
--> ยังไม่ได้ตั้ง insecure registry หรือยังไม่ได้ restart Docker
+-> Docker client ยังไม่ได้ตั้ง insecure registry หรือยังไม่ได้ restart Docker
 
 no such host
 -> /etc/hosts หรือ DNS ผิด
@@ -340,10 +340,18 @@ sudo journalctl -u containerd -n 50
 - image name/tag ผิด
 - registry เข้าไม่ได้
 - private registry ไม่มี credential
-- insecure registry ยังไม่ได้ config
+- containerd ยังไม่ได้ config ให้ใช้ HTTP registry
 - worker resolve hostname ไม่ได้
 
-ถ้าใช้ private registry แบบ HTTP ต้อง config container runtime บน worker node ทุกเครื่อง ไม่ใช่แค่เครื่องที่ build image
+ถ้าใช้ private registry แบบ HTTP ต้อง config container runtime บน worker node ทุกเครื่อง ไม่ใช่แค่เครื่องที่ build image และไม่ใช่แค่ `/etc/docker/daemon.json`
+
+ตรวจ config containerd:
+
+```bash
+sudo ls -lah /etc/containerd/certs.d/devops-control:5000
+sudo cat /etc/containerd/certs.d/devops-control:5000/hosts.toml
+sudo journalctl -u containerd -n 50
+```
 
 ## Service เรียกไม่ได้ใน Kubernetes
 
@@ -466,6 +474,8 @@ sudo ufw status numbered
 docker compose logs prometheus
 ```
 
+ถ้า Prometheus container resolve `app-server` ไม่ได้ ให้ใช้ IP ตรงใน `prometheus.yml` หรือเพิ่ม `extra_hosts` ใน `docker-compose.yml`
+
 ## Loki ไม่มี log
 
 ตรวจ Loki:
@@ -490,6 +500,8 @@ curl http://localhost:9080/targets
 - path ใน `__path__` ไม่ match ไฟล์ log
 - label ที่ query ไม่ตรง
 - Grafana time range แคบเกินไป
+
+ถ้า Promtail container resolve `monitor-server` ไม่ได้ ให้ใช้ IP ตรงใน `clients.url` หรือเพิ่ม `--add-host monitor-server:<ip>` ตอน run container
 
 ทดสอบสร้าง log:
 

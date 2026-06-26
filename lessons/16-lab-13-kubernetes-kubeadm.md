@@ -135,6 +135,27 @@ SystemdCgroup = true
 
 ถ้า cgroup driver ไม่ตรงกัน อาจเจอปัญหา kubelet start ไม่ขึ้นหรือ node ไม่ Ready
 
+ถ้าจะให้ Kubernetes pull image จาก private registry แบบ HTTP เช่น `devops-control:5000` ต้องตั้งค่าฝั่ง containerd บนทุก node เพิ่มด้วย ตัวอย่าง:
+
+```bash
+sudo mkdir -p /etc/containerd/certs.d/devops-control:5000
+cat <<EOF | sudo tee /etc/containerd/certs.d/devops-control:5000/hosts.toml
+server = "http://devops-control:5000"
+
+[host."http://devops-control:5000"]
+  capabilities = ["pull", "resolve", "push"]
+EOF
+```
+
+ตรวจใน `/etc/containerd/config.toml` ว่า registry config path ชี้ไปที่ `/etc/containerd/certs.d` ถ้ายังไม่ตั้งให้เพิ่มในส่วน registry ของ CRI plugin ตาม version ของ containerd ที่ใช้ แล้ว restart:
+
+```bash
+sudo grep -n "config_path" /etc/containerd/config.toml
+sudo systemctl restart containerd
+```
+
+การตั้ง `/etc/docker/daemon.json` ใช้กับ Docker daemon เท่านั้น ไม่ได้ทำให้ kubelet ที่ใช้ containerd pull image จาก HTTP registry ได้
+
 ติดตั้ง kubeadm/kubelet/kubectl:
 
 ```bash

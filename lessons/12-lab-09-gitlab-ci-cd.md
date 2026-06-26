@@ -120,6 +120,26 @@ docker logs gitlab-runner
 docker exec -it gitlab-runner gitlab-runner list
 ```
 
+ถ้าใช้ Docker executor และต้องการให้ job build/push image ผ่าน Docker socket ให้ตรวจไฟล์ config ของ runner ด้วย:
+
+```bash
+sudo grep -n "volumes" /srv/gitlab-runner/config/config.toml
+```
+
+ควรมี volume ของ Docker socket ถูกส่งเข้า job container เช่น:
+
+```toml
+volumes = ["/cache", "/var/run/docker.sock:/var/run/docker.sock"]
+```
+
+ถ้าไม่มี ให้แก้ `config.toml` แล้ว restart runner:
+
+```bash
+docker restart gitlab-runner
+```
+
+การ mount socket ที่ container ของ runner อย่างเดียวอาจยังไม่พอถ้า runner ไม่ส่ง socket เข้า job container ผ่าน `config.toml`
+
 ถ้า pipeline ค้างที่ pending มักเกิดจาก runner ยังไม่ register, runner offline, tag ไม่ตรง หรือ project ไม่อนุญาตให้ใช้ runner นั้น
 
 ## ตัวอย่าง .gitlab-ci.yml
@@ -275,7 +295,7 @@ docker: command not found
 -> image ที่ใช้ใน job ไม่มี docker CLI หรือ runner config ไม่เหมาะ
 
 Cannot connect to Docker daemon
--> runner ไม่ได้ mount /var/run/docker.sock หรือ permission ไม่พอ
+-> runner ไม่ได้ส่ง /var/run/docker.sock เข้า job container ผ่าน config.toml หรือ permission ไม่พอ
 
 server gave HTTP response to HTTPS client
 -> Docker daemon ของ runner ยังไม่ได้ตั้ง insecure registry
