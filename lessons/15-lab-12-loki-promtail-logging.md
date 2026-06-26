@@ -27,6 +27,14 @@ app-server
 -> ผู้ใช้ค้น log จาก browser
 ```
 
+```mermaid
+flowchart LR
+    Logs["Log files / journal<br/>บน app-server"] --> Promtail["Promtail"]
+    Promtail -->|push log streams| Loki["Loki<br/>monitor-server:3100"]
+    Grafana["Grafana"] -->|LogQL query| Loki
+    User["ผู้เรียน"] -->|ค้นหา log| Grafana
+```
+
 Loki ไม่เหมือน Elasticsearch ตรงที่ Loki เน้น index label มากกว่า index full text ทั้งหมด ดังนั้นการเลือก label ให้ดี เช่น `host`, `job`, `service` จะช่วยให้ query ง่ายและเร็วขึ้น
 
 ## เพิ่ม Loki ใน docker-compose

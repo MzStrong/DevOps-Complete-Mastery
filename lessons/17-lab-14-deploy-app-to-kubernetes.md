@@ -19,6 +19,19 @@ Deployment
 -> Service ชื่อ simple-api ส่ง traffic ไป pod
 ```
 
+```mermaid
+flowchart TB
+    Deploy["Deployment<br/>simple-api"] --> RS["ReplicaSet"]
+    RS --> Pod1["Pod simple-api #1"]
+    RS --> Pod2["Pod simple-api #2"]
+    Pod1 --> C1["Container<br/>simple-api:3000"]
+    Pod2 --> C2["Container<br/>simple-api:3000"]
+    Registry["devops-control:5000<br/>Private Registry"] -->|pull image| Pod1
+    Registry -->|pull image| Pod2
+    SVC["Service<br/>simple-api:80"] -->|targetPort 3000| Pod1
+    SVC -->|targetPort 3000| Pod2
+```
+
 ถ้า image pull ไม่ได้ pod จะไม่รัน ถ้า app start แล้ว crash pod จะเข้า CrashLoopBackOff ถ้า Service selector ไม่ตรงกับ label ของ pod จะเรียก service ไม่เจอ backend
 
 ## สร้าง Namespace

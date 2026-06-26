@@ -84,6 +84,20 @@ Developer push code
 -> rollback ได้
 ```
 
+```mermaid
+flowchart LR
+    Dev["Developer"] --> Repo["GitLab Repo"]
+    Repo --> Test["test"]
+    Test --> Build["build Docker image"]
+    Build --> Scan["scan image"]
+    Scan --> Push["push registry"]
+    Push --> DevDeploy["deploy dev"]
+    DevDeploy --> Approval["manual approve"]
+    Approval --> ProdDeploy["deploy prod/lab"]
+    ProdDeploy --> Observe["monitor + log"]
+    Observe --> Rollback["rollback if needed"]
+```
+
 pipeline ขั้นต่ำควรมี stage:
 
 ```yaml

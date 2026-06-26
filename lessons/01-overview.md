@@ -49,6 +49,36 @@ PC ที่บ้าน
     └── k8s-worker-02      : Kubernetes Worker
 ```
 
+```mermaid
+flowchart TB
+    subgraph Host["PC ที่บ้าน"]
+        VMware["VMware Workstation / Player"]
+    end
+
+    subgraph VMs["VMs ใน Lab"]
+        Control["devops-control<br/>GitLab + Runner + Registry"]
+        App["app-server<br/>Manual Deploy + Docker"]
+        Monitor["monitor-server<br/>Prometheus + Grafana + Loki"]
+        Master["k8s-master-01<br/>Control Plane"]
+        Worker1["k8s-worker-01<br/>Worker"]
+        Worker2["k8s-worker-02<br/>Worker"]
+    end
+
+    VMware --> Control
+    VMware --> App
+    VMware --> Monitor
+    VMware --> Master
+    VMware --> Worker1
+    VMware --> Worker2
+
+    Control -->|stores image| Registry["Private Registry<br/>:5000"]
+    Worker1 -->|pull image| Registry
+    Worker2 -->|pull image| Registry
+    Monitor -->|scrape metrics / collect logs| App
+    Monitor -->|observe| Worker1
+    Monitor -->|observe| Worker2
+```
+
 ## Flow การทำงานที่ต้องเข้าใจ
 
 ภาพรวมการทำงานของ Lab เมื่อประกอบครบจะประมาณนี้:
@@ -64,6 +94,20 @@ Developer push code
 -> Loki/Promtail รวม log
 -> Trivy scan security
 -> Backup/Restore ใช้กู้ระบบเมื่อเกิดปัญหา
+```
+
+```mermaid
+flowchart LR
+    Dev["Developer"] --> Git["GitLab Repo"]
+    Git --> Runner["GitLab Runner"]
+    Runner --> Test["Test"]
+    Test --> Build["Build Docker Image"]
+    Build --> Scan["Trivy Scan"]
+    Scan --> Registry["Private Registry"]
+    Registry --> Deploy["Deploy to VM / Kubernetes"]
+    Deploy --> Metrics["Prometheus + Grafana"]
+    Deploy --> Logs["Loki + Promtail"]
+    Deploy --> Backup["Backup / Restore"]
 ```
 
 สิ่งสำคัญคือทุกขั้นมีจุดตรวจสอบของตัวเอง อย่าแก้ปัญหาข้ามชั้น เช่น ถ้า deploy แล้ว app เข้าไม่ได้ ควรตรวจว่า container หรือ pod รันอยู่ไหม, service เปิด port หรือยัง, DNS/hosts ชี้ถูกไหม, firewall block หรือเปล่า และ log ของ app มี error อะไร ไม่ควรสรุปทันทีว่า Kubernetes หรือ Docker พัง

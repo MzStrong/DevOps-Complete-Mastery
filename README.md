@@ -69,6 +69,23 @@ PC ที่บ้าน
     └── k8s-worker-02      : Kubernetes Worker
 ```
 
+```mermaid
+flowchart TB
+    PC["PC ที่บ้าน"] --> VMware["VMware Workstation / Player"]
+    VMware --> Control["devops-control<br/>GitLab, Runner, Registry"]
+    VMware --> App["app-server<br/>Manual deploy, Docker, Compose"]
+    VMware --> Monitor["monitor-server<br/>Prometheus, Grafana, Loki"]
+    VMware --> Master["k8s-master-01<br/>Kubernetes Control Plane"]
+    VMware --> Worker1["k8s-worker-01<br/>Kubernetes Worker"]
+    VMware --> Worker2["k8s-worker-02<br/>Kubernetes Worker"]
+    Control --> Registry["Private Registry<br/>devops-control:5000"]
+    Worker1 --> Registry
+    Worker2 --> Registry
+    Monitor --> App
+    Monitor --> Worker1
+    Monitor --> Worker2
+```
+
 ## เครื่องมือหลัก
 
 - Ubuntu Server 22.04 LTS หรือ 24.04 LTS
@@ -121,6 +138,18 @@ Code
 -> Secure
 -> Backup
 -> Restore
+```
+
+```mermaid
+flowchart LR
+    Code["Code"] --> Test["Test"]
+    Test --> Build["Build image"]
+    Build --> Registry["Push Registry"]
+    Registry --> Deploy["Deploy"]
+    Deploy --> Observe["Monitor + Log"]
+    Observe --> Secure["Security Scan"]
+    Secure --> Backup["Backup"]
+    Backup --> Restore["Restore"]
 ```
 
 และสามารถนำความรู้ไปต่อยอดกับงาน DevOps, Cloud, Platform Engineering หรือ SRE ได้ง่ายขึ้น โดยเฉพาะถ้ามีพื้นฐานการพัฒนา Fullstack application อยู่แล้ว

@@ -27,6 +27,14 @@ app-server
 -> Dashboard แสดง CPU/RAM/Disk/Network
 ```
 
+```mermaid
+flowchart LR
+    App["app-server"] --> Exporter["node_exporter<br/>:9100/metrics"]
+    Prom["Prometheus<br/>monitor-server:9090"] -->|scrape| Exporter
+    Grafana["Grafana<br/>monitor-server:3000"] -->|query datasource| Prom
+    User["ผู้เรียน"] -->|เปิด dashboard| Grafana
+```
+
 Prometheus ไม่ได้รอให้ agent push ข้อมูลมา แต่จะไปดึงข้อมูลจาก target ตามรอบที่กำหนด เรียกว่า scrape ถ้า network, DNS หรือ firewall มีปัญหา target จะขึ้น down
 
 ## ติดตั้ง Node Exporter บน app-server

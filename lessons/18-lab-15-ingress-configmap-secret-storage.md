@@ -26,6 +26,18 @@ PV/PVC
 -> ให้ pod ใช้ storage ถาวร
 ```
 
+```mermaid
+flowchart LR
+    Client["Client / Browser"] --> Host["simple-api.lab.local"]
+    Host --> Controller["Nginx Ingress Controller"]
+    Controller --> Rule["Ingress<br/>host/path rule"]
+    Rule --> Service["Service<br/>simple-api:80"]
+    Service --> Pod["Pod<br/>simple-api"]
+    Config["ConfigMap"] -->|env / file| Pod
+    Secret["Secret"] -->|secretKeyRef| Pod
+    PVC["PVC"] -->|mount volume| Pod
+```
+
 บทก่อนหน้า Service แบบ `ClusterIP` เรียกได้จากใน cluster เป็นหลัก บทนี้เพิ่ม Ingress เพื่อให้เรียกจากเครื่องทดสอบภายนอก cluster ด้วย hostname ได้
 
 ## ติดตั้ง Nginx Ingress Controller

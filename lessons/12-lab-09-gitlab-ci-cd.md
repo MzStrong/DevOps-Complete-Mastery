@@ -22,6 +22,23 @@ Developer push code
 -> deploy job เตรียม deploy ไป environment
 ```
 
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant GitLab as GitLab CE
+    participant Runner as GitLab Runner
+    participant Docker as Docker daemon
+    participant Registry as Private Registry
+
+    Dev->>GitLab: push commit
+    GitLab->>Runner: create pipeline job
+    Runner->>Runner: run test job
+    Runner->>Docker: docker build image
+    Docker-->>Runner: image built
+    Runner->>Registry: docker push image tag
+    Runner->>GitLab: report job status
+```
+
 GitLab CE คือ web application สำหรับจัดการ repository และ pipeline ส่วน GitLab Runner คือ worker ที่รับ job จาก GitLab ไปรันจริง ถ้ามี GitLab แต่ไม่มี Runner pipeline จะถูกสร้างได้แต่ไม่มีเครื่องรัน job
 
 ## ติดตั้ง GitLab CE บน devops-control
