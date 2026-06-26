@@ -150,3 +150,15 @@ sudo hostnamectl
 ถ้า `sudo -v` ไม่ผ่าน ให้แก้สิทธิ์ก่อนเริ่ม lab ถัดไป เพราะเกือบทุกบทต้องติดตั้ง package, แก้ service, เปิด firewall หรือแก้ config ระบบ
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [1. ภาพรวม Lab](./01-overview.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [3. คำศัพท์ DevOps สำคัญ](./03-devops-terms.md)
+
+<!-- lesson-nav:end -->

@@ -261,3 +261,15 @@ scan image
 บทนี้ทำให้ pipeline มี security gate เบื้องต้น ขั้นถัดไปคือ backup/restore เพื่อให้ระบบรับมือความเสียหายหรือความผิดพลาดได้
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [19. Lab 16: Helm Chart](./19-lab-16-helm-chart.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [21. Lab 18: Backup, Restore และ DR พื้นฐาน](./21-lab-18-backup-restore-dr.md)
+
+<!-- lesson-nav:end -->

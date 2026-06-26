@@ -322,3 +322,15 @@ logs -> จุดเริ่มต้นของการ debug container
 เมื่อเข้าใจ Docker พื้นฐานแล้ว บทถัดไปจะใช้ Docker Compose เพื่อรันหลาย service พร้อมกัน เช่น frontend, backend, database และ Nginx
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [7. Lab 04: Nginx Reverse Proxy และ Manual Deploy](./07-lab-04-nginx-reverse-proxy-manual-deploy.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [9. Lab 06: Docker Compose สำหรับ Fullstack App](./09-lab-06-docker-compose-fullstack-app.md)
+
+<!-- lesson-nav:end -->

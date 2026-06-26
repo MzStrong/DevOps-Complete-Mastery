@@ -597,3 +597,15 @@ Secret backup ต้องเก็บอย่างปลอดภัย
 ```
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [23. Checklist หลังเรียนจบ](./23-completion-checklist.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [ภาคผนวก: คำสั่งที่ควรจำ](./25-appendix-commands.md)
+
+<!-- lesson-nav:end -->

@@ -262,3 +262,15 @@ destroy = ลบของจริง
 เมื่อใช้กับ cloud ให้ระวังมากกว่า lab นี้ เพราะ `apply` และ `destroy` อาจสร้างค่าใช้จ่ายหรือลบ resource สำคัญได้เสมอ
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [12. Lab 09: CI/CD ด้วย GitLab CE และ GitLab Runner](./12-lab-09-gitlab-ci-cd.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [14. Lab 11: Monitoring ด้วย Prometheus และ Grafana](./14-lab-11-prometheus-grafana-monitoring.md)
+
+<!-- lesson-nav:end -->

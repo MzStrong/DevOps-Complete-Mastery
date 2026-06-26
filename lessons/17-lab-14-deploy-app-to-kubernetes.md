@@ -341,3 +341,15 @@ rollout/rollback = คุม version
 หลังบทนี้ app รันใน Kubernetes ได้แล้ว แต่ยังเข้าจากภายนอก cluster ได้ไม่สะดวก บทถัดไปจะเพิ่ม Ingress, ConfigMap, Secret และ Storage
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [16. Lab 13: Kubernetes Cluster ด้วย kubeadm](./16-lab-13-kubernetes-kubeadm.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [18. Lab 15: Ingress, ConfigMap, Secret และ Storage](./18-lab-15-ingress-configmap-secret-storage.md)
+
+<!-- lesson-nav:end -->

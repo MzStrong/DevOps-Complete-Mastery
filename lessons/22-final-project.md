@@ -267,3 +267,15 @@ README อธิบายตั้งแต่ local -> CI/CD -> registry -> Kub
 Final Project ที่ดีไม่จำเป็นต้องซับซ้อน แต่ต้องทำซ้ำได้ ตรวจสอบได้ และกู้คืนได้
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [21. Lab 18: Backup, Restore และ DR พื้นฐาน](./21-lab-18-backup-restore-dr.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [23. Checklist หลังเรียนจบ](./23-completion-checklist.md)
+
+<!-- lesson-nav:end -->

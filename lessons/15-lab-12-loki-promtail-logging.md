@@ -285,3 +285,15 @@ LogQL ใช้ค้นข้อความใน log
 Monitoring และ Logging ควรใช้คู่กัน: metrics บอกว่าปัญหาเกิดเมื่อไรและรุนแรงแค่ไหน ส่วน log ช่วยบอกว่าระบบทำอะไรในช่วงเวลานั้น
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [14. Lab 11: Monitoring ด้วย Prometheus และ Grafana](./14-lab-11-prometheus-grafana-monitoring.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [16. Lab 13: Kubernetes Cluster ด้วย kubeadm](./16-lab-13-kubernetes-kubeadm.md)
+
+<!-- lesson-nav:end -->

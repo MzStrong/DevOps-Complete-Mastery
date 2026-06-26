@@ -287,3 +287,15 @@ DevOps ต้องอ่านอาการระบบจาก Linux ได
 ถ้าฝึก pattern นี้จนคุ้น บทต่อ ๆ ไปจะ debug ง่ายขึ้นมาก
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [4. Lab 01: เตรียม VM และ Ubuntu Server](./04-lab-01-vm-and-ubuntu-server.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [6. Lab 03: Network, DNS, Port และ Firewall](./06-lab-03-network-dns-port-firewall.md)
+
+<!-- lesson-nav:end -->

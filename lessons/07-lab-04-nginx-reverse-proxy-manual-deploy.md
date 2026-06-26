@@ -355,3 +355,15 @@ health check ต้องบอกสถานะได้
 เครื่องมือหลังจากนี้จะช่วย automate ขั้นตอน แต่ไม่ได้ลบพื้นฐานเหล่านี้ออกไป
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [6. Lab 03: Network, DNS, Port และ Firewall](./06-lab-03-network-dns-port-firewall.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [8. Lab 05: Docker พื้นฐาน](./08-lab-05-docker-basics.md)
+
+<!-- lesson-nav:end -->

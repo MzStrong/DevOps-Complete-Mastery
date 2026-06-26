@@ -276,3 +276,15 @@ helm template/lint ช่วยตรวจ ก่อน deploy จริง
 เมื่อใช้ Helm คล่องแล้ว deployment ใน CI/CD จะสะอาดขึ้น เพราะ pipeline แค่เลือก values และ image tag ที่ต้องการ deploy
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [18. Lab 15: Ingress, ConfigMap, Secret และ Storage](./18-lab-15-ingress-configmap-secret-storage.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [20. Lab 17: DevSecOps ด้วย Trivy](./20-lab-17-devsecops-trivy.md)
+
+<!-- lesson-nav:end -->

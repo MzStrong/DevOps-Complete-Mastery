@@ -191,3 +191,15 @@ kubectl get all -n devops-lab -o yaml > devops-lab-resources.yaml
 ถ้าข้อใดทำไม่ได้ ให้ย้อนกลับไปบทที่เกี่ยวข้องและแก้ให้มีหลักฐานก่อนเดินหน้าต่อ
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [22. Final Project](./22-final-project.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [24. Troubleshooting รวม](./24-troubleshooting.md)
+
+<!-- lesson-nav:end -->

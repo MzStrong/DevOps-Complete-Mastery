@@ -361,3 +361,15 @@ target down ต้องไล่จาก service, port, network, config
 Monitoring ไม่ได้แทน logging แต่ช่วยบอกว่า “ระบบเริ่มผิดปกติตอนไหนและผิดปกติแค่ไหน” ส่วน log จะช่วยอธิบายรายละเอียดของเหตุการณ์ ซึ่งจะต่อในบทถัดไป
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [13. Lab 10: Terraform และ Infrastructure as Code](./13-lab-10-terraform-iac.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [15. Lab 12: Logging ด้วย Loki และ Promtail](./15-lab-12-loki-promtail-logging.md)
+
+<!-- lesson-nav:end -->

@@ -418,3 +418,15 @@ getent hosts app-server
 เมื่อจบบทนี้ คุณควรมีอย่างน้อยหนึ่งหรือสอง VM ที่พร้อมใช้งานจริง เข้า SSH ได้ และเรียกชื่อกันได้ด้วย hostname ขั้นนี้ดูเหมือนพื้นฐาน แต่เป็นจุดที่ทำให้ Lab ทั้งชุดเสถียร ถ้าต้องเสียเวลาตรงนี้ถือว่าคุ้ม เพราะจะลดปัญหาในบท Docker, GitLab, Monitoring และ Kubernetes อย่างมาก
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [3. คำศัพท์ DevOps สำคัญ](./03-devops-terms.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [5. Lab 02: Linux, SSH, Service และ Log](./05-lab-02-linux-ssh-service-log.md)
+
+<!-- lesson-nav:end -->

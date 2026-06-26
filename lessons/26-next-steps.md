@@ -307,3 +307,15 @@ Trivy -> Secret management -> image policy -> RBAC -> admission controller -> au
 เมื่อมีโจทย์ เครื่องมือจะมีความหมายและจำได้ดีกว่าการอ่าน documentation แบบไม่มีบริบท
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [ภาคผนวก: คำสั่งที่ควรจำ](./25-appendix-commands.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [สรุปสุดท้าย](./27-final-summary.md)
+
+<!-- lesson-nav:end -->

@@ -358,3 +358,15 @@ kubectl/describe/log คือเครื่องมือ debug หลัก
 หลัง cluster Ready แล้ว บทถัดไปจะเริ่ม deploy application เข้า Kubernetes ด้วย Deployment และ Service
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [15. Lab 12: Logging ด้วย Loki และ Promtail](./15-lab-12-loki-promtail-logging.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [17. Lab 14: Deploy App เข้า Kubernetes](./17-lab-14-deploy-app-to-kubernetes.md)
+
+<!-- lesson-nav:end -->

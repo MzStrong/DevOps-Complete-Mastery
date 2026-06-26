@@ -291,3 +291,15 @@ IP ถูกไหม
 ถ้าฝึกไล่แบบนี้จนคล่อง จะช่วยลดเวลาการแก้ปัญหาในบท Docker, GitLab, Monitoring และ Kubernetes ได้มาก
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [5. Lab 02: Linux, SSH, Service และ Log](./05-lab-02-linux-ssh-service-log.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [7. Lab 04: Nginx Reverse Proxy และ Manual Deploy](./07-lab-04-nginx-reverse-proxy-manual-deploy.md)
+
+<!-- lesson-nav:end -->

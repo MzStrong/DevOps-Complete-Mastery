@@ -221,3 +221,15 @@ Secret backup ต้องเก็บอย่างปลอดภัย
 บทนี้ปิดวงจรพื้นฐานของ DevOps Lab: deploy ได้, monitor/log ได้, secure ได้ และกู้คืนได้เมื่อเกิดปัญหา
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [20. Lab 17: DevSecOps ด้วย Trivy](./20-lab-17-devsecops-trivy.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [22. Final Project](./22-final-project.md)
+
+<!-- lesson-nav:end -->

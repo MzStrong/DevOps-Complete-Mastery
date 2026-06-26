@@ -239,3 +239,15 @@ code change
 บทถัดไปเรื่อง GitLab CI/CD จะนำแนวคิดนี้ไปทำ automation เพื่อให้ pipeline build/test/deploy ตาม branch หรือ tag ที่กำหนด
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [10. Lab 07: Private Container Registry](./10-lab-07-private-container-registry.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [12. Lab 09: CI/CD ด้วย GitLab CE และ GitLab Runner](./12-lab-09-gitlab-ci-cd.md)
+
+<!-- lesson-nav:end -->

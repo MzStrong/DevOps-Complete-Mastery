@@ -109,3 +109,15 @@ Developer push code
 ถ้าภาพรวมนี้ยังไม่ชัด ให้ย้อนอ่าน architecture และ flow อีกครั้งก่อนเริ่มสร้าง VM เพราะการวาง lab ให้เป็นระบบตั้งแต่ต้นจะลดเวลาการแก้ปัญหาในบทหลังอย่างมาก
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [DevOps Lab ภาษาไทย สำหรับจำลองบน VMware ที่บ้าน](./00-introduction.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [2. สเปกเครื่องและ Network ที่แนะนำ](./02-recommended-specs-and-network.md)
+
+<!-- lesson-nav:end -->

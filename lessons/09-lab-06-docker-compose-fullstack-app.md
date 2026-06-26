@@ -417,3 +417,15 @@ logs ราย service = จุดเริ่มต้นของการ deb
 Compose เป็นสะพานสำคัญก่อนเข้า Kubernetes เพราะแนวคิดหลายอย่างคล้ายกัน เช่น service, environment, volume, network และ health ของ workload เพียงแต่ Kubernetes จะจัดการในระดับ cluster
 
 ---
+
+<!-- lesson-nav:start -->
+
+---
+
+## บทนำทาง
+
+- บทก่อนหน้า: [8. Lab 05: Docker พื้นฐาน](./08-lab-05-docker-basics.md)
+- สารบัญ: [DevOps Lab Lessons](./README.md)
+- บทเรียนถัดไป: [10. Lab 07: Private Container Registry](./10-lab-07-private-container-registry.md)
+
+<!-- lesson-nav:end -->
