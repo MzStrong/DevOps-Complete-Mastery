@@ -91,6 +91,85 @@ ingress:
   host: simple-api.lab.local
 ```
 
+เพื่อให้ chart นี้ต่อจาก Lab 14-15 ได้จริง ให้แก้ template หลักให้สร้าง resource ชื่อเดียวกับบทก่อนหน้า ถ้าใช้ไฟล์ที่ `helm create` สร้างมา ให้ลบ template ที่ไม่ใช้ก่อน เช่น `templates/tests/` และปรับ `templates/deployment.yaml`, `templates/service.yaml`, `templates/ingress.yaml` ให้เรียบง่ายตามตัวอย่างด้านล่าง
+
+ตัวอย่าง `templates/deployment.yaml`:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-api
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: simple-api
+  template:
+    metadata:
+      labels:
+        app: simple-api
+    spec:
+      containers:
+        - name: simple-api
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.containerPort }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.containerPort }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.containerPort }}
+```
+
+ตัวอย่าง `templates/service.yaml`:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-api
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: simple-api
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.containerPort }}
+```
+
+ตัวอย่าง `templates/ingress.yaml`:
+
+```yaml
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-api
+  namespace: {{ .Release.Namespace }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: simple-api
+                port:
+                  number: {{ .Values.service.port }}
+{{- end }}
+```
+
+ตัวอย่างนี้ตั้งชื่อ Deployment, Service และ Ingress เป็น `simple-api` เพื่อให้คำสั่งจากบทก่อน เช่น `kubectl rollout status deployment/simple-api -n devops-lab` ใช้ต่อได้ทันที
+
 ค่าพวกนี้คือสิ่งที่มักเปลี่ยนตาม environment:
 
 - `replicaCount` dev อาจใช้ 1, prod อาจใช้ 3+

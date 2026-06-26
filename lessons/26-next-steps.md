@@ -2,6 +2,48 @@
 
 หลังทำ Lab นี้จบ คุณจะมีพื้นฐานตั้งแต่ Linux, Docker, CI/CD, Monitoring, Logging, Kubernetes, Security และ Backup แล้ว ขั้นต่อไปควรเลือกเรียนตามเป้าหมายงาน ไม่จำเป็นต้องเรียนทุกเครื่องมือพร้อมกัน ให้เลือกเส้นทางที่ช่วยแก้ปัญหาจริงในระบบของคุณก่อน
 
+## ระดับถัดไปควรเรียนอะไร
+
+ถ้าต้องการยืนให้มั่นในระดับ Junior DevOps:
+
+```text
+Linux troubleshooting -> Docker/Compose -> GitLab CI/CD -> Registry -> Kubernetes basics -> Monitoring/Logging basics
+```
+
+เป้าหมายคือทำงานประจำวันได้ เช่น อ่าน pipeline log, แก้ service ไม่ขึ้น, ตรวจ image pull fail, ดู pod crash, เปิด dashboard และอธิบาย rollback path ได้
+
+ถ้าต้องการขยับไป Mid-level DevOps:
+
+```text
+Terraform cloud resource -> GitOps -> Helm/Kustomize จริงจัง -> Secret management -> Alerting -> Backup automation
+```
+
+เป้าหมายคือออกแบบ flow deploy ที่ทำซ้ำได้, ลด manual step, แยก environment, จัดการ secret อย่างปลอดภัย และทำให้ระบบมี alert/restore ที่พิสูจน์ได้
+
+ถ้าต้องการไปทาง Platform Engineer:
+
+```text
+Kubernetes operations -> RBAC -> NetworkPolicy -> Ingress/TLS -> cert-manager -> External Secrets -> Cluster upgrade -> Multi-environment platform
+```
+
+เป้าหมายคือดูแล platform ให้ทีมอื่นใช้ได้ ไม่ใช่แค่ deploy app ของตัวเอง ต้องคิดเรื่อง standard, permission, isolation, reliability และ developer experience
+
+ถ้าต้องการไปทาง SRE:
+
+```text
+Prometheus -> Alertmanager -> Loki -> OpenTelemetry -> SLO/SLI -> Incident response -> Capacity planning
+```
+
+เป้าหมายคือวัดความน่าเชื่อถือของระบบได้จริง รู้ว่าเมื่อไรควร alert, ลด noise, วิเคราะห์ incident และปรับระบบจากข้อมูล ไม่ใช่จากความรู้สึก
+
+ถ้าต้องการไปทาง DevSecOps:
+
+```text
+Trivy -> Secret scanning -> Dependency policy -> Image signing -> Admission controller -> RBAC audit -> Compliance evidence
+```
+
+เป้าหมายคือเอา security เข้าไปใน flow การ build/deploy โดยไม่ทำให้ทีม deploy ช้าจนใช้งานไม่ได้
+
 ## ถ้าอยากเก่ง Automation และ Server Management
 
 ### Ansible สำหรับ configuration management

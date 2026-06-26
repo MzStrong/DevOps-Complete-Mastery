@@ -130,6 +130,19 @@ devops-control:5000/simple-api:1.0.0
 
 ทุก Kubernetes node ต้อง resolve `devops-control` ได้ และ container runtime ต้อง pull จาก registry นี้ได้ ถ้า worker ใช้ containerd ต้องตั้งค่า registry ฝั่ง containerd ไม่ใช่แค่ Docker daemon ไม่อย่างนั้นจะเจอ ImagePullBackOff
 
+ก่อน apply manifest ให้ตรวจว่า tag นี้มีอยู่จริงใน registry:
+
+```bash
+curl http://devops-control:5000/v2/simple-api/tags/list
+```
+
+ถ้าคุณใช้ image จาก GitLab CI/CD ใน Lab 09 แล้ว pipeline push ด้วย tag แบบ commit เช่น `$CI_COMMIT_SHORT_SHA` ให้เลือกอย่างใดอย่างหนึ่ง:
+
+- push tag `1.0.0` เพิ่มตามตัวอย่าง Lab 09
+- หรือแก้ `image:` ใน manifest นี้ให้ตรงกับ tag ที่มีจริงใน registry
+
+หลักสำคัญคือ tag ใน Kubernetes manifest ต้องตรงกับ tag ที่ registry มีจริง ไม่อย่างนั้น pod จะติด `ImagePullBackOff`
+
 Apply:
 
 ```bash

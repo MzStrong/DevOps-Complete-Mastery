@@ -51,6 +51,8 @@ docker run -d \
 
 GitLab ใช้ RAM และ CPU ค่อนข้างมาก หลัง start ครั้งแรกอาจต้องรอหลายนาทีกว่าจะพร้อมใช้งาน ตรวจสถานะได้ด้วย:
 
+ใน Lab นี้ใช้ `gitlab/gitlab-ce:latest` เพื่อให้ติดตั้งง่าย แต่ถ้าต้องการให้ lab ทำซ้ำได้เหมือนเดิมทุกครั้ง ควร pin version ของ GitLab CE เป็น tag ที่ชัดเจน เช่น `gitlab/gitlab-ce:<version>` และจด version นั้นไว้ใน note ส่วนตัว
+
 ```bash
 docker logs -f gitlab
 docker ps
@@ -95,6 +97,8 @@ docker run -d --name gitlab-runner --restart always \
 ```
 
 Runner container นี้ mount 2 จุดสำคัญ:
+
+เช่นเดียวกับ GitLab CE การใช้ `gitlab/gitlab-runner:latest` เหมาะกับ lab เริ่มต้น แต่ถ้าต้องการความนิ่งควร pin version ให้ตรงกับ GitLab ที่ใช้
 
 - `/srv/gitlab-runner/config:/etc/gitlab-runner` เก็บ config runner ถาวร
 - `/var/run/docker.sock:/var/run/docker.sock` ให้ job ที่รันใน runner สั่ง Docker daemon ของ host ได้
@@ -166,7 +170,9 @@ build:
   image: docker:latest
   script:
     - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+    - docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:1.0.0
     - docker push $IMAGE_NAME:$IMAGE_TAG
+    - docker push $IMAGE_NAME:1.0.0
 
 deploy_dev:
   stage: deploy
@@ -186,10 +192,13 @@ deploy_dev:
 - `IMAGE_TAG` ใช้ `$CI_COMMIT_SHORT_SHA` เพื่อให้ image tag trace กลับไป commit ได้
 - `test` ใช้ Node image เพื่อรันคำสั่งทดสอบ
 - `build` ใช้ Docker image เพื่อ build และ push container image
+- `docker tag ... 1.0.0` เพิ่ม tag ตัวอย่างสำหรับใช้ต่อในบท Kubernetes ของ lab นี้ ถ้าใช้กับ release จริง ไม่ควรเขียนทับ `1.0.0` ทุก commit แต่ควรสร้าง tag ใหม่ตาม release เช่น `1.0.1`, `1.0.2` หรือใช้ `$CI_COMMIT_SHORT_SHA` แล้วแก้ manifest ให้ตรงกับ tag นั้น
 - `deploy_dev` เป็น placeholder สำหรับ deploy จริงในบทต่อไป
 - `only: main` จำกัดให้ deploy ทำเฉพาะ branch main
 
 ข้อควรระวัง: ตัวอย่าง `build` job ต้องรันบน runner ที่เข้าถึง Docker daemon ได้ และ Docker daemon ต้องตั้ง insecure registry สำหรับ `devops-control:5000` แล้ว ไม่อย่างนั้น `docker push` จะ fail
+
+ในตัวอย่างนี้ `docker:latest` เป็น image ของเครื่องมือที่ใช้ใน job ไม่ใช่ release tag ของ application ถ้าต้องการ lab ที่ reproducible มากขึ้น ให้ pin เป็น version ชัดเจน เช่น `docker:<version>` ส่วน application image ไม่ควรใช้ `latest` เป็น tag เดียว เพราะ rollback และ audit ยาก
 
 ตัวอย่างที่ผิด:
 

@@ -4,11 +4,36 @@ Repository นี้เป็นชุดเอกสารสำหรับฝ
 
 เนื้อหาหลักอยู่ในโฟลเดอร์ [lessons](./lessons) โดยเริ่มอ่านจาก [lessons/README.md](./lessons/README.md)
 
+Lab นี้ออกแบบเพื่อการเรียนรู้และ troubleshooting ในเครื่องส่วนตัว ไม่ใช่ production hardening เต็มรูปแบบ บางจุดจึงใช้ค่าแบบง่าย เช่น HTTP registry หรือ image ของเครื่องมือแบบ `latest` เพื่อให้เริ่มได้เร็ว เมื่อเอาแนวคิดไปใช้จริงควรเพิ่ม HTTPS, authentication, access control, version pinning, backup policy และ security policy ให้เหมาะกับระบบจริง
+
 ## เกี่ยวกับ Lab นี้
 
 เอกสารนี้ออกแบบมาสำหรับผู้ที่มีพื้นฐาน Fullstack Developer แล้ว และต้องการต่อยอดไปสู่สาย DevOps Engineer, Cloud Engineer, Platform Engineer หรือ SRE ผ่านการฝึกกับระบบจำลองที่ใกล้เคียงงานจริง
 
 Lab จะพาฝึกตั้งแต่พื้นฐาน Linux server, network, service, log และ firewall ไปจนถึงการ deploy application ด้วย Nginx, Docker, Docker Compose, GitLab CI/CD, Terraform, Monitoring, Logging, Kubernetes, Helm, Security scan และ Backup/Restore
+
+## ระดับของเอกสาร
+
+เอกสารนี้อยู่ระดับ Junior ถึงต้น Mid-level DevOps ในเชิงทักษะปฏิบัติ เหมาะสำหรับคนที่ต้องการเข้าใจ workflow ตั้งแต่ code ไปจนถึงระบบที่ deploy, monitor, debug, secure และ restore ได้
+
+สิ่งที่เอกสารนี้ช่วยให้ทำได้:
+
+- เข้าใจพื้นฐาน Linux, network, service, log และ troubleshooting
+- สร้าง flow พื้นฐานของ DevOps ตั้งแต่ build image, push registry, CI/CD, deploy เข้า Kubernetes และตรวจระบบ
+- ใช้เครื่องมือหลักในสาย DevOps ได้พอเข้าใจบทบาทและจุดตรวจสอบ
+- เตรียมพื้นฐานสำหรับสมัครหรือทำงานระดับ Junior DevOps, Cloud/Infra junior, Platform junior หรือ Fullstack Developer ที่ต้องดูแล deployment เอง
+
+สิ่งที่ยังไม่ใช่ขอบเขตหลักของเอกสารนี้:
+
+- Production Kubernetes แบบ HA
+- Cloud architecture จริงบน AWS, Azure หรือ GCP
+- GitOps เต็มรูปแบบ
+- Secret management ระดับองค์กร
+- Observability ที่มี alert, tracing, SLO/SLI ครบ
+- Security hardening, RBAC, policy และ compliance แบบ production
+- Backup/DR automation ระดับ production
+
+ถ้าต้องการขยับไป Mid-level หรือสูงกว่า ให้ดูบท [แนวทางเรียนต่อ](./lessons/26-next-steps.md) หลังทำ Lab ครบ
 
 ## สิ่งที่จะได้ฝึก
 

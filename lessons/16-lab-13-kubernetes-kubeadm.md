@@ -18,6 +18,18 @@ Lab นี้สร้าง Kubernetes cluster เองบน VM ด้วย 
 | containerd | container runtime |
 | CNI | network plugin ของ Kubernetes |
 
+กลุ่ม resource ที่จะเจอบ่อยหลัง cluster พร้อม:
+
+| กลุ่ม | Resource ที่พบบ่อย | หน้าที่ |
+|---|---|---|
+| Workload | Pod, Deployment, ReplicaSet, StatefulSet, DaemonSet, Job, CronJob | รัน application หรืองานใน cluster |
+| Network | Service, Ingress, NetworkPolicy | ทำให้ traffic ไปถึง workload และควบคุม network access |
+| Config | ConfigMap, Secret | ส่งค่า config หรือข้อมูลลับให้ workload |
+| Storage | PersistentVolumeClaim | ขอใช้ storage สำหรับข้อมูลที่ต้องอยู่รอด |
+| Cluster | Node, Namespace, HPA, ResourceQuota | จัดการ node, ขอบเขต namespace, autoscale และ quota |
+
+บทนี้เน้นสร้าง cluster ให้พร้อมก่อน ส่วน resource เหล่านี้จะเริ่มใช้จริงใน Lab 14 เป็นต้นไป ดูคำอธิบายรวมได้ในบทคำศัพท์ DevOps
+
 ภาพรวม component:
 
 ```text
@@ -153,6 +165,21 @@ EOF
 sudo grep -n "config_path" /etc/containerd/config.toml
 sudo systemctl restart containerd
 ```
+
+ค่าที่ต้องเห็นหรือเพิ่มใน `/etc/containerd/config.toml` คือ:
+
+```toml
+[plugins."io.containerd.grpc.v1.cri".registry]
+  config_path = "/etc/containerd/certs.d"
+```
+
+ถ้าไฟล์มี section นี้อยู่แล้ว ให้เพิ่มหรือแก้เฉพาะบรรทัด `config_path` ไม่ต้องสร้าง section ซ้ำ หลัง restart ให้ทดสอบจาก worker node ด้วย:
+
+```bash
+sudo crictl pull devops-control:5000/simple-api:1.0.0
+```
+
+ถ้า `crictl` ยังไม่มี ให้ติดตั้งภายหลังได้ แต่สำหรับ lab นี้อย่างน้อยต้องดู log ของ containerd/kubelet เมื่อ pull image ไม่ผ่าน
 
 การตั้ง `/etc/docker/daemon.json` ใช้กับ Docker daemon เท่านั้น ไม่ได้ทำให้ kubelet ที่ใช้ containerd pull image จาก HTTP registry ได้
 

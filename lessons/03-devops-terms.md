@@ -45,12 +45,22 @@
 | Worker Node | เครื่องใน Kubernetes ที่ใช้รัน workload |
 | Pod | หน่วยเล็กสุดที่ Kubernetes ใช้รัน container |
 | Deployment | resource ที่คุมจำนวน pod และ rollout version |
+| ReplicaSet | resource ที่คุมจำนวน pod ให้ตรงกับจำนวนที่ต้องการ มักถูก Deployment สร้างให้ |
+| StatefulSet | resource สำหรับ workload ที่มี identity หรือ storage ต่อ pod เช่น database |
+| DaemonSet | resource ที่ทำให้ pod รันบนทุก node หรือ node ที่เลือก เช่น log agent |
+| Job | resource สำหรับงานที่รันให้จบ เช่น backup หรือ migration |
+| CronJob | resource สำหรับตั้งเวลาสร้าง Job ตาม schedule |
 | Service Kubernetes | resource ที่ให้ชื่อและ endpoint คงที่สำหรับเรียก pod |
 | Ingress | resource สำหรับรับ traffic จากภายนอกเข้า service ใน cluster |
+| NetworkPolicy | resource สำหรับกำหนดว่า pod ใดคุยกับ pod/service ใดได้บ้าง |
 | ConfigMap | resource สำหรับเก็บ config ที่ไม่ลับใน Kubernetes |
+| Secret Kubernetes | resource สำหรับเก็บข้อมูลลับใน Kubernetes เช่น password หรือ token |
 | PersistentVolume | storage จริงที่ Kubernetes ใช้เก็บข้อมูลถาวร |
 | PersistentVolumeClaim | คำขอใช้ storage จาก pod หรือ workload |
 | Namespace | พื้นที่แยก resource ภายใน Kubernetes cluster |
+| Node | เครื่อง worker หรือ control-plane ที่เป็นสมาชิกของ Kubernetes cluster |
+| HPA | Horizontal Pod Autoscaler resource สำหรับเพิ่ม/ลดจำนวน replica ตาม metric |
+| ResourceQuota | resource สำหรับจำกัดปริมาณ resource ที่ namespace ใช้ได้ |
 | Manifest | ไฟล์ YAML ที่อธิบาย resource ที่ต้องการสร้างใน Kubernetes |
 | Chart | package ของ Helm ที่รวม template และ values สำหรับ deploy |
 | Vulnerability | ช่องโหว่ด้าน security |
@@ -245,6 +255,344 @@ Deployment -> สร้าง/คุม ReplicaSet -> สร้าง Pod -> ร
 ```
 
 ถ้าแก้ image ใน Deployment แล้ว Kubernetes จะ rollout pod ใหม่ให้ ถ้าเข้าไปแก้ container ด้วยมือโดยตรง การแก้จะหายเมื่อ pod ถูกสร้างใหม่
+
+### Kubernetes Resource แยกตามกลุ่ม
+
+เวลาอ่าน manifest หรือใช้ `kubectl get` ให้มอง resource เป็นกลุ่ม จะเข้าใจง่ายกว่าจำชื่อแยกกัน Resource แต่ละกลุ่มตอบคำถามคนละแบบ:
+
+```text
+workload -> รันอะไร
+network  -> เรียกถึงกันอย่างไร
+config   -> ตั้งค่าอะไรให้ app
+storage  -> เก็บข้อมูลไว้ที่ไหน
+cluster  -> จัดการ cluster/namespace อย่างไร
+```
+
+#### Workload
+
+กลุ่มนี้เกี่ยวกับการรันงานหรือ application ใน cluster
+
+| ชื่อย่อ/ชื่อ | ชื่อเต็ม | ใช้ทำอะไร |
+|---|---|---|
+| pod | Pod | หน่วยเล็กสุดที่รัน container หนึ่งตัวหรือหลายตัว |
+| deploy | Deployment | คุม stateless app, จำนวน replica, rollout และ rollback |
+| rs | ReplicaSet | คุมจำนวน pod ให้ครบตามที่ต้องการ ปกติ Deployment จะสร้างให้เอง |
+| sts | StatefulSet | ใช้กับ app ที่ต้องมีชื่อ pod คงที่หรือ storage ประจำตัว เช่น database |
+| ds | DaemonSet | บังคับให้มี pod รันบนทุก node หรือ node ที่เลือก เช่น log collector, node agent |
+| job | Job | รันงานครั้งเดียวให้สำเร็จ เช่น database migration, backup |
+| cronjob | CronJob | สร้าง Job ตามเวลา เช่น backup ทุกคืน |
+
+ตัวอย่างการดู:
+
+```bash
+kubectl get pod -n devops-lab
+kubectl get deploy -n devops-lab
+kubectl get rs -n devops-lab
+kubectl get job,cronjob -n devops-lab
+```
+
+ใน Lab นี้จะใช้ `Deployment` เป็นหลัก เพราะ `simple-api` เป็น stateless app ที่ scale และ rollout ได้ง่าย
+
+`pod` หรือ `Pod` คือหน่วยเล็กสุดที่ Kubernetes ใช้รัน workload ข้างใน pod อาจมี container หนึ่งตัวหรือหลายตัวที่แชร์ network namespace เดียวกัน เช่น ใช้ IP เดียวกันและคุยกันผ่าน `localhost` ได้ ปกติเราไม่ค่อยสร้าง pod เดี่ยว ๆ สำหรับ app จริง เพราะถ้า pod หาย Kubernetes จะไม่มี controller คอยสร้างกลับมาให้ ยกเว้นกรณี debug หรือทดสอบสั้น ๆ
+
+ตัวอย่างการดู pod:
+
+```bash
+kubectl get pod -n devops-lab
+kubectl describe pod <pod-name> -n devops-lab
+kubectl logs <pod-name> -n devops-lab
+```
+
+เวลามีปัญหาให้ดู pod ก่อนเสมอ เพราะ pod เป็นจุดที่เห็นอาการจริง เช่น `Running`, `Pending`, `CrashLoopBackOff`, `ImagePullBackOff` หรือ probe fail
+
+`deploy` หรือ `Deployment` คือ resource สำหรับรัน stateless application เช่น API, web app หรือ worker ที่แต่ละ replica แทนกันได้ Deployment คุมจำนวน replica, สร้าง ReplicaSet, rollout version ใหม่ และ rollback กลับ version เก่าได้ ถ้าแก้ image tag ใน Deployment Kubernetes จะค่อย ๆ สร้าง pod ชุดใหม่และลด pod ชุดเก่า
+
+ตัวอย่างการดู Deployment:
+
+```bash
+kubectl get deploy -n devops-lab
+kubectl describe deploy simple-api -n devops-lab
+kubectl rollout status deployment/simple-api -n devops-lab
+kubectl rollout history deployment/simple-api -n devops-lab
+```
+
+ใน Lab นี้ `simple-api` เหมาะกับ Deployment เพราะ app ไม่มี state ในตัว pod ถ้า pod ถูกลบ pod ใหม่สามารถรับงานแทนได้
+
+`rs` หรือ `ReplicaSet` คือ resource ที่คุมให้จำนวน pod ตรงกับจำนวนที่ต้องการ เช่น ต้องมี pod 2 ตัว ถ้าหายไป 1 ตัว ReplicaSet จะสร้างกลับมา โดยทั่วไปเราไม่แก้ ReplicaSet โดยตรง เพราะ Deployment เป็นคนสร้างและจัดการ ReplicaSet ให้ตอน rollout แต่การดู ReplicaSet ช่วยให้เข้าใจว่า Deployment สร้าง pod version ไหนอยู่
+
+ตัวอย่างการดู ReplicaSet:
+
+```bash
+kubectl get rs -n devops-lab
+kubectl describe rs <rs-name> -n devops-lab
+```
+
+ถ้า rollout แล้วมี ReplicaSet เก่ากับใหม่พร้อมกัน เป็นเรื่องปกติ เพราะ Kubernetes เก็บ revision ไว้เพื่อ rollback
+
+`sts` หรือ `StatefulSet` คือ resource สำหรับ workload ที่ต้องมี identity คงที่ เช่น pod ชื่อเดิม ลำดับเดิม และ storage ประจำตัว ตัวอย่างที่มักใช้ StatefulSet คือ database, message queue หรือระบบที่ node แต่ละตัวมีบทบาทเฉพาะ เช่น `postgres-0`, `postgres-1` จุดต่างจาก Deployment คือ pod ใน StatefulSet ไม่ได้ถูกมองว่าแทนกันได้ทั้งหมด
+
+ตัวอย่างการดู StatefulSet:
+
+```bash
+kubectl get sts -n devops-lab
+kubectl describe sts <sts-name> -n devops-lab
+```
+
+ถ้า app ต้องมีข้อมูลถาวรต่อ replica หรือจำเป็นต้องมีชื่อ pod คงที่ ให้เริ่มคิดถึง StatefulSet แต่ถ้าเป็น API stateless ปกติใช้ Deployment ง่ายกว่า
+
+`ds` หรือ `DaemonSet` คือ resource ที่ทำให้ pod รันบนทุก node หรือบน node ที่เลือกตามเงื่อนไข เหมาะกับ agent ที่ต้องอยู่คู่กับ node เช่น log collector, monitoring agent, CNI component หรือ storage agent ตัวอย่างเช่น Promtail, node exporter หรือ network plugin บางตัวมักใช้แนวคิดแบบ DaemonSet
+
+ตัวอย่างการดู DaemonSet:
+
+```bash
+kubectl get ds -A
+kubectl describe ds <ds-name> -n <namespace>
+```
+
+ถ้ามี node 3 เครื่อง DaemonSet อาจสร้าง pod 3 ตัวโดยอัตโนมัติ เครื่องละ 1 ตัว ยกเว้นมี taint, nodeSelector หรือ affinity จำกัดไว้
+
+`job` หรือ `Job` คือ resource สำหรับงานที่ต้องรันให้เสร็จแล้วจบ เช่น migration, import data, backup ครั้งเดียว หรือ batch task เมื่อ command ใน pod จบสำเร็จ Job จะถือว่า complete ไม่ต้องรันค้างเหมือน Deployment
+
+ตัวอย่างการดู Job:
+
+```bash
+kubectl get job -n devops-lab
+kubectl describe job <job-name> -n devops-lab
+kubectl logs job/<job-name> -n devops-lab
+```
+
+ถ้างานต้องสำเร็จหนึ่งครั้งแล้วหยุด ใช้ Job ดีกว่าสร้าง Deployment ที่รันค้างโดยไม่จำเป็น
+
+`cronjob` หรือ `CronJob` คือ resource ที่สร้าง Job ตามเวลา เช่น backup ทุกคืน, cleanup ทุกชั่วโมง หรือส่ง report ทุกวัน รูปแบบ schedule คล้าย cron บน Linux เช่น `0 2 * * *` หมายถึงรันทุกวันเวลา 02:00
+
+ตัวอย่างการดู CronJob:
+
+```bash
+kubectl get cronjob -n devops-lab
+kubectl describe cronjob <cronjob-name> -n devops-lab
+kubectl get job -n devops-lab
+```
+
+ถ้า CronJob ไม่ทำงาน ให้ดู schedule, timezone ของ cluster, suspend flag และ Job ที่ถูกสร้างขึ้นมาว่าสำเร็จหรือ fail
+
+#### Network
+
+กลุ่มนี้เกี่ยวกับการให้ traffic วิ่งถึง pod อย่างถูกทาง
+
+| ชื่อย่อ/ชื่อ | ชื่อเต็ม | ใช้ทำอะไร |
+|---|---|---|
+| svc | Service | ให้ endpoint คงที่สำหรับเรียก pod แม้ pod IP จะเปลี่ยน |
+| ingress | Ingress | รับ traffic จากภายนอก cluster แล้ว route เข้า Service ตาม host/path |
+| netpol | NetworkPolicy | จำกัด traffic เข้า/ออก pod ตาม label, namespace หรือ port |
+
+ตัวอย่างการดู:
+
+```bash
+kubectl get svc -n devops-lab
+kubectl get ingress -n devops-lab
+kubectl get netpol -n devops-lab
+```
+
+ถ้า app เข้าไม่ได้ ให้ไล่จาก `Ingress -> Service -> Endpoints -> Pod` อย่าเริ่มแก้ Deployment ทันทีถ้ายังไม่รู้ว่า traffic ไปถึงชั้นไหน
+
+`svc` หรือ `Service` คือ resource ที่ให้ชื่อและ endpoint คงที่สำหรับเรียก pod เพราะ pod IP เปลี่ยนได้ทุกครั้งที่ pod ถูกสร้างใหม่ Service ใช้ selector เลือก pod จาก label แล้วส่ง traffic ไปยัง pod ที่ match กัน ถ้า selector ไม่ตรงกับ label ของ pod Service จะมีอยู่แต่ไม่มี backend
+
+ชนิดของ Service ที่พบบ่อย:
+
+```text
+ClusterIP    = เรียกได้ภายใน cluster
+NodePort     = เปิด port บน node เพื่อให้ภายนอกเรียกได้
+LoadBalancer = ขอ external load balancer จาก cloud provider หรือ MetalLB
+```
+
+ตัวอย่างการตรวจ Service:
+
+```bash
+kubectl get svc -n devops-lab
+kubectl describe svc simple-api -n devops-lab
+kubectl get endpoints simple-api -n devops-lab
+```
+
+ถ้า `endpoints` ว่าง แปลว่า Service หา pod ไม่เจอ ให้ตรวจ label/selector ก่อนตรวจ network ชั้นอื่น
+
+`ingress` หรือ `Ingress` คือ resource ที่รับ HTTP/HTTPS traffic จากภายนอก cluster แล้ว route เข้า Service ตาม host หรือ path เช่น `simple-api.lab.local` ไปที่ Service `simple-api` การมี Ingress resource อย่างเดียวไม่พอ ต้องมี Ingress Controller เช่น Nginx Ingress Controller คอยอ่าน resource แล้วรับ traffic จริง
+
+ตัวอย่างการตรวจ Ingress:
+
+```bash
+kubectl get ingress -n devops-lab
+kubectl describe ingress simple-api -n devops-lab
+curl -H "Host: simple-api.lab.local" http://<node-ip>
+```
+
+ถ้า Ingress เข้าไม่ได้ ให้ตรวจตามลำดับ: DNS/hosts ชี้ถูก IP, Ingress Controller รันอยู่, Ingress rule ถูก, Service มี endpoint และ pod ตอบ health ได้
+
+`netpol` หรือ `NetworkPolicy` คือ resource สำหรับควบคุมว่า pod ใดรับ traffic จากใครได้ หรือออกไปหาใครได้บ้าง โดยอิง label, namespace, IP block และ port ใช้เพื่อลด blast radius เช่น ให้ backend รับ traffic เฉพาะจาก frontend หรือให้ database รับเฉพาะจาก backend
+
+ตัวอย่างการดู NetworkPolicy:
+
+```bash
+kubectl get netpol -n devops-lab
+kubectl describe netpol <netpol-name> -n devops-lab
+```
+
+ข้อควรจำคือ NetworkPolicy จะมีผลก็ต่อเมื่อ CNI ที่ใช้รองรับ policy เช่น Calico ถ้า CNI ไม่ enforce policy การสร้าง NetworkPolicy อาจไม่มีผลจริง
+
+#### Config
+
+กลุ่มนี้เกี่ยวกับค่าที่ส่งให้ application โดยไม่ต้องฝังไว้ใน image
+
+| ชื่อย่อ/ชื่อ | ชื่อเต็ม | ใช้ทำอะไร |
+|---|---|---|
+| cm | ConfigMap | เก็บ config ที่ไม่ลับ เช่น `APP_ENV`, `LOG_LEVEL`, URL ภายใน |
+| secret | Secret | เก็บข้อมูลลับ เช่น password, token, certificate key |
+
+ตัวอย่างการดู:
+
+```bash
+kubectl get cm -n devops-lab
+kubectl get secret -n devops-lab
+kubectl describe cm simple-api-config -n devops-lab
+```
+
+ConfigMap และ Secret ช่วยให้ image เดียวกันใช้ได้หลาย environment โดยเปลี่ยนค่า runtime แทนการ build image ใหม่ทุกครั้ง
+
+`cm` หรือ `ConfigMap` คือ resource สำหรับเก็บ config ที่ไม่ลับ เช่น environment name, log level, feature flag, URL ภายใน หรือ config file ที่ mount เข้า pod ได้ ConfigMap ช่วยให้ image เดียวกันใช้ได้หลาย environment โดยเปลี่ยน config ตอน deploy แทนการ build image ใหม่
+
+ตัวอย่างการดู ConfigMap:
+
+```bash
+kubectl get cm -n devops-lab
+kubectl describe cm simple-api-config -n devops-lab
+kubectl get cm simple-api-config -n devops-lab -o yaml
+```
+
+ข้อมูลที่ไม่ควรใส่ใน ConfigMap คือ password, token, private key หรือข้อมูลที่ถ้าหลุดแล้วมีผลด้าน security
+
+`secret` หรือ `Secret` คือ resource สำหรับเก็บข้อมูลลับ เช่น password, token, certificate หรือ registry credential ใน Kubernetes ค่าใน Secret มักถูก encode เป็น base64 ซึ่งไม่ใช่ encryption ดังนั้นห้ามเข้าใจผิดว่า Secret ปลอดภัยพอสำหรับทุกกรณี Production จริงควรควบคุม RBAC, encryption at rest และอาจใช้ Vault/External Secrets เพิ่ม
+
+ตัวอย่างการดู Secret:
+
+```bash
+kubectl get secret -n devops-lab
+kubectl describe secret simple-api-secret -n devops-lab
+kubectl get secret simple-api-secret -n devops-lab -o yaml
+```
+
+ถ้าต้อง decode ค่าเพื่อ debug ใน lab:
+
+```bash
+kubectl get secret simple-api-secret -n devops-lab -o jsonpath='{.data.DB_PASSWORD}' | base64 -d
+```
+
+ให้ใช้คำสั่ง decode เฉพาะตอนจำเป็น และอย่าเอาค่าลับไปใส่ใน README, screenshot หรือ git repository
+
+#### Storage
+
+กลุ่มนี้เกี่ยวกับข้อมูลที่ต้องอยู่รอดหลัง pod ถูกลบหรือสร้างใหม่
+
+| ชื่อย่อ/ชื่อ | ชื่อเต็ม | ใช้ทำอะไร |
+|---|---|---|
+| pvc | PersistentVolumeClaim | คำขอใช้ storage จาก workload |
+| pv | PersistentVolume | storage จริงที่ cluster เตรียมไว้หรือ provision ให้อัตโนมัติ |
+
+ตัวอย่างการดู:
+
+```bash
+kubectl get pvc -n devops-lab
+kubectl get pv
+kubectl describe pvc <pvc-name> -n devops-lab
+```
+
+Pod เป็นของชั่วคราว แต่ข้อมูลบางอย่างไม่ควรชั่วคราว เช่น database data หรือ uploaded files จึงต้องใช้ storage ที่ออกแบบไว้ชัดเจน
+
+`pvc` หรือ `PersistentVolumeClaim` คือคำขอใช้ storage จาก workload เช่น ขอ disk ขนาด 5Gi แบบ ReadWriteOnce แล้วนำไป mount เข้า pod PVC เป็นสิ่งที่ application อ้างถึงโดยตรง ส่วน Kubernetes จะจับคู่ PVC กับ PV ที่เหมาะสม หรือให้ storage class provision PV ให้อัตโนมัติ
+
+ตัวอย่างการดู PVC:
+
+```bash
+kubectl get pvc -n devops-lab
+kubectl describe pvc <pvc-name> -n devops-lab
+```
+
+ถ้า PVC อยู่สถานะ `Pending` ให้ตรวจว่ามี PV หรือ StorageClass ที่ตอบคำขอนั้นได้ไหม เช่น access mode, storage size และ storage class name ตรงกันหรือไม่
+
+`pv` หรือ `PersistentVolume` คือ storage จริงที่ cluster ใช้ให้ pod เก็บข้อมูล อาจเป็น local path, NFS, cloud disk หรือ storage backend อื่น ๆ PV มี lifecycle แยกจาก pod ดังนั้น pod ลบแล้วข้อมูลอาจยังอยู่ตาม policy ที่ตั้งไว้ เช่น `Retain` หรือ `Delete`
+
+ตัวอย่างการดู PV:
+
+```bash
+kubectl get pv
+kubectl describe pv <pv-name>
+```
+
+ใน lab อาจใช้ storage แบบง่าย เช่น `hostPath` เพื่อเรียน concept แต่ production ควรใช้ storage backend ที่เหมาะกับการ recover, backup, snapshot และย้าย workload
+
+#### Cluster
+
+กลุ่มนี้เกี่ยวกับการจัดการขอบเขต, node และ resource ของ cluster
+
+| ชื่อย่อ/ชื่อ | ชื่อเต็ม | ใช้ทำอะไร |
+|---|---|---|
+| node | Node | เครื่องใน cluster ที่รัน workload หรือ control plane |
+| ns | Namespace | แยก resource เป็นกลุ่ม เช่น `devops-lab`, `dev`, `prod` |
+| hpa | HorizontalPodAutoscaler | เพิ่ม/ลดจำนวน replica อัตโนมัติตาม metric เช่น CPU |
+| quota | ResourceQuota | จำกัด resource ที่ namespace ใช้ได้ เช่น CPU, memory, จำนวน pod |
+
+ตัวอย่างการดู:
+
+```bash
+kubectl get nodes
+kubectl get ns
+kubectl get hpa -n devops-lab
+kubectl get quota -n devops-lab
+```
+
+Resource กลุ่มนี้ช่วยให้ cluster ไม่กลายเป็นพื้นที่รวมทุกอย่างแบบไร้ขอบเขต โดยเฉพาะเมื่อมีหลายทีม หลาย environment หรือ resource จำกัด
+
+`node` หรือ `Node` คือเครื่องที่เป็นสมาชิกของ Kubernetes cluster อาจเป็น control plane หรือ worker node ก็ได้ Node มี kubelet และ container runtime เพื่อรัน pod และรายงานสถานะกลับไปที่ control plane ถ้า node `NotReady` pod บน node นั้นอาจมีปัญหาหรือถูก reschedule ไปที่อื่น
+
+ตัวอย่างการดู Node:
+
+```bash
+kubectl get nodes -o wide
+kubectl describe node k8s-worker-01
+```
+
+เวลา node มีปัญหาให้ตรวจทั้งฝั่ง Kubernetes และ Linux เช่น kubelet, containerd, network, disk และ memory
+
+`ns` หรือ `Namespace` คือพื้นที่แยก resource ภายใน cluster ใช้แบ่ง environment, team หรือ lab เช่น `devops-lab`, `dev`, `prod` ชื่อ resource ส่วนใหญ่ซ้ำกันได้ถ้าอยู่คนละ namespace เช่นมี Service ชื่อ `api` ใน namespace `dev` และ `prod`
+
+ตัวอย่างการดู Namespace:
+
+```bash
+kubectl get ns
+kubectl get all -n devops-lab
+```
+
+Namespace ไม่ใช่ security boundary ที่สมบูรณ์ด้วยตัวเอง ถ้าต้องการแยกสิทธิ์หรือ network จริงต้องใช้ RBAC, NetworkPolicy และ quota ประกอบ
+
+`hpa` หรือ `HorizontalPodAutoscaler` คือ resource สำหรับเพิ่มหรือลดจำนวน replica อัตโนมัติตาม metric เช่น CPU, memory หรือ custom metric HPA มักใช้กับ Deployment เพื่อ scale pod ตามโหลด
+
+ตัวอย่างการดู HPA:
+
+```bash
+kubectl get hpa -n devops-lab
+kubectl describe hpa <hpa-name> -n devops-lab
+```
+
+HPA ต้องมี metrics source เช่น Metrics Server ถ้าไม่มี metric ให้ดึง HPA จะคำนวณจำนวน replica ไม่ได้
+
+`quota` หรือ `ResourceQuota` คือ resource สำหรับจำกัดการใช้ resource ใน namespace เช่น จำกัด CPU, memory, จำนวน pod, จำนวน PVC หรือจำนวน Service ใช้ป้องกันไม่ให้ namespace เดียวใช้ resource ของ cluster เกินควบคุม
+
+ตัวอย่างการดู ResourceQuota:
+
+```bash
+kubectl get quota -n devops-lab
+kubectl describe quota <quota-name> -n devops-lab
+```
+
+ถ้า apply workload แล้วเจอ error ว่าเกิน quota ให้ลด resource request/limit, ลดจำนวน replica หรือปรับ quota ให้เหมาะสม
 
 ### ConfigMap, Secret และ Volume
 
